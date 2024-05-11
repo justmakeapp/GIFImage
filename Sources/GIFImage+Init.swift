@@ -27,7 +27,8 @@ public extension GIFImage {
         placeholder: RawImage = RawImage(),
         errorImage: RawImage? = nil,
         frameRate: FrameRate = .dynamic,
-        loopAction: @Sendable @escaping (GIFSource) async throws -> Void = { _ in }
+        loopAction: @Sendable @escaping (GIFSource) async throws -> Void = { _ in },
+        @ViewBuilder imageViewBuilder: @escaping (Image) -> ImageView
     ) {
         self.init(
             url: url,
@@ -36,7 +37,8 @@ public extension GIFImage {
             placeholder: placeholder,
             errorImage: errorImage,
             frameRate: frameRate,
-            loopAction: loopAction
+            loopAction: loopAction,
+            imageViewBuilder: imageViewBuilder
         )
     }
     
@@ -58,7 +60,8 @@ public extension GIFImage {
         placeholder: RawImage = RawImage(),
         errorImage: RawImage? = nil,
         frameRate: FrameRate = .dynamic,
-        loopAction: @Sendable @escaping (GIFSource) async throws -> Void = { _ in }
+        loopAction: @Sendable @escaping (GIFSource) async throws -> Void = { _ in },
+        @ViewBuilder imageViewBuilder: @escaping (Image) -> ImageView
     ) {
         guard let resolvedURL = URL(string: url) else {
             return nil
@@ -70,7 +73,8 @@ public extension GIFImage {
             placeholder: placeholder,
             errorImage: errorImage,
             frameRate: frameRate,
-            loopAction: loopAction
+            loopAction: loopAction,
+            imageViewBuilder: imageViewBuilder
         )
     }
 
@@ -92,7 +96,8 @@ public extension GIFImage {
         placeholder: RawImage = RawImage(),
         errorImage: RawImage? = nil,
         frameRate: FrameRate = .dynamic,
-        loopAction: @Sendable @escaping (GIFSource) async throws -> Void = { _ in }
+        loopAction: @Sendable @escaping (GIFSource) async throws -> Void = { _ in },
+        @ViewBuilder imageViewBuilder: @escaping (Image) -> ImageView
     ) {
         self.init(
             url: url,
@@ -101,7 +106,8 @@ public extension GIFImage {
             placeholder: placeholder,
             errorImage: errorImage,
             frameRate: frameRate,
-            loopAction: loopAction
+            loopAction: loopAction,
+            imageViewBuilder: imageViewBuilder
         )
     }
     
@@ -123,7 +129,8 @@ public extension GIFImage {
         placeholder: RawImage = RawImage(),
         errorImage: RawImage? = nil,
         frameRate: FrameRate = .dynamic,
-        loopAction: @Sendable @escaping (GIFSource) async throws -> Void = { _ in }
+        loopAction: @Sendable @escaping (GIFSource) async throws -> Void = { _ in },
+        @ViewBuilder imageViewBuilder: @escaping (Image) -> ImageView
     ) {
         self.init(
             source: GIFSource.remoteURL(url),
@@ -132,7 +139,8 @@ public extension GIFImage {
             placeholder: placeholder,
             errorImage: errorImage,
             frameRate: frameRate,
-            loopAction: loopAction
+            loopAction: loopAction,
+            imageViewBuilder: imageViewBuilder
         )
     }
     
@@ -154,7 +162,8 @@ public extension GIFImage {
         placeholder: RawImage = RawImage(),
         errorImage: RawImage? = nil,
         frameRate: FrameRate = .dynamic,
-        loopAction: @Sendable @escaping (GIFSource) async throws -> Void = { _ in }
+        loopAction: @Sendable @escaping (GIFSource) async throws -> Void = { _ in },
+        @ViewBuilder imageViewBuilder: @escaping (Image) -> ImageView
     ) {
         self.init(
             source: GIFSource.remoteRequest(request),
@@ -163,7 +172,8 @@ public extension GIFImage {
             placeholder: placeholder,
             errorImage: errorImage,
             frameRate: frameRate,
-            loopAction: loopAction
+            loopAction: loopAction,
+            imageViewBuilder: imageViewBuilder
         )
     }
 }

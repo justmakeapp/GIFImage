@@ -3,11 +3,13 @@ import SwiftUI
 /// `GIFImage` is a `View` that loads a `Data` object from a source into `CoreImage.CGImageSource`, parse the image source
 /// into frames and stream them based in the "Delay" key packaged on which frame item. The view will use the `ImageLoader` from the environment
 /// to convert the fetch the `Data`
-public struct GIFImage: View {
+public struct GIFImage<ImageView: View>: View {
     public let source: GIFSource
     public let placeholder: RawImage
     public let errorImage: RawImage?
     private let presentationController: PresentationController
+
+    private let imageViewBuilder: (Image) -> ImageView
 
     @Environment(\.imageLoader) var imageLoader
     @State @MainActor private var frame: RawImage?
@@ -33,7 +35,8 @@ public struct GIFImage: View {
         placeholder: RawImage = RawImage(),
         errorImage: RawImage? = nil,
         frameRate: FrameRate = .dynamic,
-        loopAction: @Sendable @escaping (GIFSource) async throws -> Void = { _ in }
+        loopAction: @Sendable @escaping (GIFSource) async throws -> Void = { _ in },
+        @ViewBuilder imageViewBuilder: @escaping (Image) -> ImageView
     ) {
         self.init(
             source: source,
@@ -42,7 +45,8 @@ public struct GIFImage: View {
             placeholder: placeholder,
             errorImage: errorImage,
             frameRate: frameRate,
-            loopAction: loopAction
+            loopAction: loopAction,
+            imageViewBuilder: imageViewBuilder
         )
     }
     
@@ -63,7 +67,8 @@ public struct GIFImage: View {
         placeholder: RawImage = RawImage(),
         errorImage: RawImage? = nil,
         frameRate: FrameRate = .dynamic,
-        loopAction: @Sendable @escaping (GIFSource) async throws -> Void = { _ in }
+        loopAction: @Sendable @escaping (GIFSource) async throws -> Void = { _ in },
+        @ViewBuilder imageViewBuilder: @escaping (Image) -> ImageView
     ) {
         self.source = source
         self._animate = animate
@@ -78,12 +83,12 @@ public struct GIFImage: View {
             loop: loop,
             action: loopAction
         )
+
+        self.imageViewBuilder = imageViewBuilder
     }
 
     public var body: some View {
-        Image.loadImage(with: frame ?? placeholder)
-            .resizable()
-            .scaledToFit()
+        imageViewBuilder(Image.loadImage(with: frame ?? placeholder))
             .onChange(of: loop) { _, newValue in
                 handle(loop: newValue)
             }
@@ -120,18 +125,18 @@ public struct GIFImage: View {
     }
 }
 
-#if DEBUG
-let placeholder = RawImage.create(symbol: "photo.circle.fill")!
-let error = RawImage.create(symbol: "xmark.octagon")
-let gifURL = "https://raw.githubusercontent.com/igorcferreira/GIFImage/main/Tests/test.gif"
-#Preview("Raw URL") {
-    GIFImage(url: gifURL, placeholder: placeholder, errorImage: error)
-}
-#Preview("Limited 5 FPS") {
-    GIFImage(url: gifURL, placeholder: placeholder, errorImage: error, frameRate: .limited(fps: 5))
-}
-#Preview("Limited to 30 FPS") {
-    GIFImage(url: gifURL, placeholder: placeholder, errorImage: error, frameRate: .static(fps: 30))
-}
-#endif
-
+//#if DEBUG
+//let placeholder = RawImage.create(symbol: "photo.circle.fill")!
+//let error = RawImage.create(symbol: "xmark.octagon")
+//let gifURL = "https://raw.githubusercontent.com/igorcferreira/GIFImage/main/Tests/test.gif"
+//#Preview("Raw URL") {
+//    GIFImage(url: gifURL, placeholder: placeholder, errorImage: error)
+//}
+//#Preview("Limited 5 FPS") {
+//    GIFImage(url: gifURL, placeholder: placeholder, errorImage: error, frameRate: .limited(fps: 5))
+//}
+//#Preview("Limited to 30 FPS") {
+//    GIFImage(url: gifURL, placeholder: placeholder, errorImage: error, frameRate: .static(fps: 30))
+//}
+//#endif
+//
